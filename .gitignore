@@ -1,0 +1,36 @@
+# Variáveis de ambiente - NUNCA subir chaves de API
+.env
+.env.local
+!.env.example
+
+# Dados sensíveis
+*.csv
+cyber_attacks.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
