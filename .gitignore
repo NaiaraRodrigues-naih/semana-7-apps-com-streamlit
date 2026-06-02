@@ -37,3 +37,6 @@ Thumbs.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Relatorio pessoal - ainda em edicao
+RELATORIO_TRILHA_D.md
