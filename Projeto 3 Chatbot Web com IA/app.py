@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai
+import requests
 import os
 import base64
 
@@ -18,10 +18,10 @@ def bg_css(path):
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
         background-image: url('data:image/png;base64,{data}');
-        background-size: cover;
+        background-size: contain;
         background-position: center;
         background-repeat: no-repeat;
-        opacity: 0.11;
+        opacity: 0.04;
         z-index: 0;
         pointer-events: none;
     }}
@@ -97,14 +97,21 @@ p, label, div { font-family: 'Rajdhani', sans-serif !important; color: #e0e0ff !
 
 /* Chat input */
 [data-testid="stChatInput"] {
-    border: 1px solid #00d4ff !important;
+    border: 2px solid #00d4ff !important;
     border-radius: 12px !important;
     background: #0d0d2b !important;
-    box-shadow: 0 0 20px #00d4ff22 !important;
+    box-shadow: 0 0 25px rgba(0,212,255,0.3) !important;
 }
 [data-testid="stChatInput"] textarea {
-    color: #e0e0ff !important;
+    color: #ffffff !important;
     background: transparent !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+}
+[data-testid="stChatInput"] textarea::placeholder {
+    color: rgba(0,212,255,0.5) !important;
+    font-style: italic !important;
 }
 hr { border-color: #ff006e22 !important; }
 </style>
@@ -112,7 +119,7 @@ hr { border-color: #ff006e22 !important; }
 
 AVATAR      = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
 KENSEI_LOGO = os.path.join(os.path.dirname(__file__), "..", "kensei_logo.png")
-st.markdown(bg_css(AVATAR), unsafe_allow_html=True)
+st.markdown(bg_css(KENSEI_LOGO), unsafe_allow_html=True)
 st.markdown("<h1>🤖 Chat com IA</h1>", unsafe_allow_html=True)
 
 AVATAR = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
@@ -123,15 +130,13 @@ with st.sidebar:
     st.markdown("<div style='text-align:center; color:#ff006e; font-family:Orbitron,sans-serif; font-size:0.8rem; letter-spacing:2px;'>KENSEI AI</div>", unsafe_allow_html=True)
     st.divider()
     st.markdown("## ⚙️ Configurações")
-    api_key = st.text_input("Gemini API Key", type="password",
-                            value=os.getenv("GEMINI_API_KEY", ""))
-    modelo = st.selectbox("Modelo", ["gemini-2.0-flash", "gemini-2.0-flash-lite"])
+    modelo = st.selectbox("Modelo", ["llama3.2", "mistral"])
     st.write("")
     if st.button("🗑️ Limpar conversa"):
         st.session_state.messages = []
         st.rerun()
     st.markdown("---")
-    st.caption("🔑 Chave grátis em: aistudio.google.com")
+    st.caption("🦙 Rodando local com Ollama")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -141,29 +146,22 @@ for msg in st.session_state.messages:
         st.write(msg["content"])
 
 if prompt := st.chat_input("Digite sua mensagem..."):
-    if not api_key:
-        st.warning("Insira sua Gemini API Key na sidebar.")
-        st.stop()
-
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
 
     try:
-        client = genai.Client(api_key=api_key)
-        historico = "\n".join(
-            f"{'Usuário' if m['role'] == 'user' else 'Assistente'}: {m['content']}"
-            for m in st.session_state.messages[:-1]
-        )
-        contexto = f"{historico}\nUsuário: {prompt}" if historico else prompt
-
         with st.chat_message("assistant"):
             with st.spinner("Pensando..."):
-                response = client.models.generate_content(model=modelo, contents=contexto)
-                resposta = response.text
+                response = requests.post(
+                    "http://localhost:11434/api/chat",
+                    json={"model": modelo, "messages": st.session_state.messages, "stream": False},
+                    timeout=120,
+                )
+                resposta = response.json()["message"]["content"]
                 st.write(resposta)
 
         st.session_state.messages.append({"role": "assistant", "content": resposta})
 
     except Exception as e:
-        st.error(f"Erro: {e}")
+        st.error(f"Erro ao conectar com Ollama: {e}")

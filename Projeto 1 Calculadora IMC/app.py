@@ -136,7 +136,7 @@ with st.sidebar:
     st.markdown("<div style='text-align:center; color:#ff006e; font-family:Orbitron,sans-serif; font-size:0.8rem; letter-spacing:2px;'>KENSEI AI</div>", unsafe_allow_html=True)
     st.divider()
 
-st.markdown(bg_css(AVATAR), unsafe_allow_html=True)
+st.markdown(bg_css(KENSEI_LOGO), unsafe_allow_html=True)
 st.markdown("<h1>🏆 Calculadora de IMC</h1>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)

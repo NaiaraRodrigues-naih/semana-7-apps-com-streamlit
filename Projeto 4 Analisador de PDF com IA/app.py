@@ -1,6 +1,6 @@
 import streamlit as st
 from pypdf import PdfReader
-from google import genai
+import requests
 from datetime import datetime
 import os
 import base64
@@ -112,7 +112,7 @@ hr { border-color: #00d4ff22 !important; }
 
 AVATAR      = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
 KENSEI_LOGO = os.path.join(os.path.dirname(__file__), "..", "kensei_logo.png")
-st.markdown(bg_css(AVATAR), unsafe_allow_html=True)
+st.markdown(bg_css(KENSEI_LOGO), unsafe_allow_html=True)
 st.markdown("<h1>📄 Analisador de PDF com IA</h1>", unsafe_allow_html=True)
 
 AVATAR = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
@@ -123,9 +123,7 @@ with st.sidebar:
     st.markdown("<div style='text-align:center; color:#00d4ff; font-family:Orbitron,sans-serif; font-size:0.8rem; letter-spacing:2px;'>KENSEI AI</div>", unsafe_allow_html=True)
     st.divider()
     st.markdown("## ⚙️ Configurações")
-    api_key = st.text_input("Gemini API Key", type="password",
-                            value=os.getenv("GEMINI_API_KEY", ""))
-    modelo = st.selectbox("Modelo", ["gemini-2.0-flash", "gemini-2.0-flash-lite"])
+    modelo = st.selectbox("Modelo", ["llama3.2", "mistral"])
 
     st.divider()
     st.markdown("## 📚 Histórico")
@@ -147,27 +145,23 @@ if arquivo:
     texto = "".join(p.extract_text() or "" for p in reader.pages)
     st.info(f"📄 **{arquivo.name}** — {len(reader.pages)} páginas, {len(texto)} caracteres")
 
-    if not api_key:
-        st.warning("Insira sua Gemini API Key na sidebar.")
-        st.stop()
-
-    client = genai.Client(api_key=api_key)
     texto_truncado = texto[:12000]
 
     if "resumo_atual" not in st.session_state or st.session_state.get("pdf_atual") != arquivo.name:
         with st.spinner("🔍 Analisando documento..."):
             try:
-                response = client.models.generate_content(
-                    model=modelo,
-                    contents=(
+                response = requests.post(
+                    "http://localhost:11434/api/chat",
+                    json={"model": modelo, "messages": [{"role": "user", "content": (
                         f"Analise o documento abaixo e forneça:\n"
                         f"1. **Tipo/Classificação** do documento\n"
                         f"2. **Resumo** em 5 bullet points\n"
                         f"3. **Pontos de atenção** relevantes\n\n"
                         f"Documento:\n{texto_truncado}"
-                    ),
+                    )}], "stream": False},
+                    timeout=120,
                 )
-                resumo = response.text
+                resumo = response.json()["message"]["content"]
                 st.session_state.resumo_atual = resumo
                 st.session_state.pdf_atual = arquivo.name
                 st.session_state.historico.append({
@@ -198,12 +192,13 @@ if arquivo:
         with st.chat_message("assistant"):
             with st.spinner("Analisando..."):
                 try:
-                    resp = client.models.generate_content(
-                        model=modelo,
-                        contents=f"Documento:\n{texto_truncado}\n\nPergunta: {pergunta}",
+                    resp = requests.post(
+                        "http://localhost:11434/api/chat",
+                        json={"model": modelo, "messages": [{"role": "user", "content": f"Documento:\n{texto_truncado}\n\nPergunta: {pergunta}"}], "stream": False},
+                        timeout=120,
                     )
-                    resposta = resp.text
+                    resposta = resp.json()["message"]["content"]
                     st.write(resposta)
                     st.session_state.chat_pdf.append({"role": "assistant", "content": resposta})
                 except Exception as e:
-                    st.error(f"Erro: {e}")
+                    st.error(f"Erro ao conectar com Ollama: {e}")

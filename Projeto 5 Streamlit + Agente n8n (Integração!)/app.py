@@ -116,12 +116,18 @@ hr { border-color: #ff006e22 !important; }
 
 AVATAR      = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
 KENSEI_LOGO = os.path.join(os.path.dirname(__file__), "..", "kensei_logo.png")
-st.markdown(bg_css(AVATAR), unsafe_allow_html=True)
+st.markdown(bg_css(KENSEI_LOGO), unsafe_allow_html=True)
 st.markdown("<h1>🛡️ SOC Investigator</h1>", unsafe_allow_html=True)
-st.markdown("<p style='color:#00d4ff; font-family:Orbitron,sans-serif; font-size:0.85rem; letter-spacing:2px;'>POWERED BY N8N AGENT</p>", unsafe_allow_html=True)
+st.markdown("<p style='color:#00d4ff; font-family:Orbitron,sans-serif; font-size:0.85rem; letter-spacing:2px;'>POWERED BY OLLAMA — IA LOCAL</p>", unsafe_allow_html=True)
 
-# --- Sidebar ---
-AVATAR = os.path.join(os.path.dirname(__file__), "..", "avatar.png")
+st.markdown("""
+<div style="background:linear-gradient(135deg,#0d0d2b,#0a1a2e);border-left:3px solid #00d4ff;
+border-radius:8px;padding:12px 16px;margin:10px 0 18px 0;color:#b0c4de;
+font-family:'Rajdhani',sans-serif;font-size:0.95rem;line-height:1.6;">
+📌 <b>O que é este app?</b> Um investigador de segurança com IA rodando 100% local.
+Digite um <b>endereço IP</b> ou <b>URL</b> suspeito e o modelo de IA vai analisar o alvo, avaliar o risco
+e gerar um relatório de triagem — como faz um analista de SOC no dia a dia.
+</div>""", unsafe_allow_html=True)
 
 with st.sidebar:
     if os.path.exists(KENSEI_LOGO):
@@ -129,8 +135,7 @@ with st.sidebar:
     st.markdown("<div style='text-align:center; color:#ff006e; font-family:Orbitron,sans-serif; font-size:0.8rem; letter-spacing:2px;'>KENSEI AI</div>", unsafe_allow_html=True)
     st.divider()
     st.markdown("## ⚙️ Configuração")
-    webhook_url = st.text_input("Webhook URL do n8n", placeholder="https://meu-n8n.app/webhook/soc")
-
+    modelo = st.selectbox("🦙 Modelo Ollama", ["llama3.2", "mistral"])
     st.divider()
     st.markdown("## 📋 Histórico")
 
@@ -153,33 +158,47 @@ with col2:
     st.write("")
     investigar = st.button("🔍 INVESTIGAR", use_container_width=True)
 
+PROMPT_SOC = """Você é um analista de SOC (Security Operations Center) experiente.
+Analise o seguinte alvo de segurança e forneça um relatório de triagem estruturado:
+
+Alvo: {alvo}
+
+Responda SEMPRE neste formato exato:
+
+**CLASSIFICAÇÃO:** [SEGURO / SUSPEITO / CRÍTICO]
+
+**TIPO DE ALVO:** [IP público / IP privado / Domínio / URL / Outro]
+
+**ANÁLISE DE RISCO:**
+- [3 pontos de análise sobre o alvo]
+
+**INDICADORES DE COMPROMETIMENTO:**
+- [Possíveis IOCs ou "Nenhum identificado"]
+
+**RECOMENDAÇÕES:**
+- [2 a 3 ações recomendadas para o analista]
+
+**VEREDICTO FINAL:** [Uma frase resumindo a situação]
+"""
+
 # --- Investigação ---
 if investigar and alvo:
-    if not webhook_url:
-        st.warning("Insira a Webhook URL do n8n na sidebar.")
-        st.stop()
-
-    with st.spinner("⚡ Agente trabalhando..."):
+    with st.spinner("⚡ Agente de IA analisando o alvo..."):
         try:
-            r = requests.post(webhook_url, json={"ip": alvo, "alvo": alvo}, timeout=60)
-            r.raise_for_status()
-            try:
-                resultado = r.json()
-            except Exception:
-                resultado = {"resposta": r.text}
+            r = requests.post(
+                "http://localhost:11434/api/chat",
+                json={
+                    "model": modelo,
+                    "messages": [{"role": "user", "content": PROMPT_SOC.format(alvo=alvo)}],
+                    "stream": False,
+                },
+                timeout=120,
+            )
+            resultado_str = r.json()["message"]["content"]
 
-            st.success("✅ Investigação concluída!")
-            st.markdown("### 📊 Resultado da Investigação")
-
-            resultado_str = json.dumps(resultado, indent=2, ensure_ascii=False) if isinstance(resultado, dict) else str(resultado)
-
-            if isinstance(resultado, dict):
-                html_rows = ""
-                for chave, valor in resultado.items():
-                    html_rows += f'<div class="kv-row"><span class="kv-key">{chave}</span><span class="kv-val">{valor}</span></div>'
-                st.markdown(f'<div class="resultado-box">{html_rows}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="resultado-box"><span class="kv-val">{resultado_str}</span></div>', unsafe_allow_html=True)
+            st.success("✅ Análise concluída!")
+            st.markdown("### 📊 Relatório de Triagem SOC")
+            st.markdown(f'<div class="resultado-box" style="white-space:pre-wrap;">{resultado_str}</div>', unsafe_allow_html=True)
 
             st.session_state.historico.append({
                 "alvo": alvo,
@@ -197,13 +216,14 @@ if investigar and alvo:
                 pdf.cell(0, 10, "Relatorio SOC - Investigacao", ln=True)
                 pdf.set_font("Helvetica", size=11)
                 pdf.cell(0, 8, f"Alvo: {alvo}", ln=True)
+                pdf.cell(0, 8, f"Modelo: {modelo}", ln=True)
                 pdf.cell(0, 8, f"Data: {datetime.now().strftime('%d/%m/%Y %H:%M')}", ln=True)
                 pdf.ln(5)
                 pdf.set_font("Helvetica", "B", 12)
                 pdf.cell(0, 8, "Resultado:", ln=True)
                 pdf.set_font("Helvetica", size=10)
                 for linha in resultado_str.split("\n"):
-                    pdf.multi_cell(0, 6, linha)
+                    pdf.multi_cell(0, 6, linha.encode("latin-1", "replace").decode("latin-1"))
                 pdf_bytes = pdf.output()
                 st.download_button(
                     label="⬇️ Baixar PDF",
@@ -212,12 +232,8 @@ if investigar and alvo:
                     mime="application/pdf",
                 )
 
-        except requests.exceptions.Timeout:
-            st.error("⏱️ Timeout — o agente n8n demorou mais de 60s.")
-        except requests.exceptions.ConnectionError:
-            st.error("🔌 Não foi possível conectar ao webhook. Verifique a URL.")
         except Exception as e:
-            st.error(f"Erro: {e}")
+            st.error(f"Erro ao conectar com Ollama: {e}")
 
 elif investigar and not alvo:
     st.warning("Digite um IP ou URL para investigar.")

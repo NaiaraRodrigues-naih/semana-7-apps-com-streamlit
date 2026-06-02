@@ -4,8 +4,11 @@
 !.env.example
 
 # Dados sensíveis
-*.csv
-cyber_attacks.csv
+*.env
+*_backup.csv
+
+# Permite o dataset do dashboard
+!Projeto 2 Dashboard de Cyber Attacks/cyber_attacks.csv
 
 # Python
 __pycache__/
