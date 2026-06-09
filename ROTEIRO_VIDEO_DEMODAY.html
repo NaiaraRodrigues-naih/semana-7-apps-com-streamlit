@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Roteiro Demo Day — Naiara Rodrigues</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f0f1a;
+    color: #e0e0f0;
+    padding: 40px 60px;
+    max-width: 900px;
+    margin: auto;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #00e5ff;
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 40px;
+  }
+
+  .timeline {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 48px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .timeline-item {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: #1a1a2e;
+    border-right: 1px solid #2a2a4a;
+    color: #aaa;
+  }
+
+  .timeline-item:last-child { border-right: none; }
+
+  .timeline-item .time {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #ff4081;
+    margin-bottom: 4px;
+  }
+
+  .slide {
+    background: #1a1a2e;
+    border-left: 4px solid #00e5ff;
+    border-radius: 0 12px 12px 0;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .slide-number {
+    background: #00e5ff;
+    color: #0f0f1a;
+    font-weight: 900;
+    font-size: 0.8rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .slide-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .slide-time {
+    margin-left: auto;
+    background: #ff4081;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #2a1a3e;
+    color: #c084fc;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    border: 1px solid #6d28d9;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #00e5ff;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  .section-label:first-of-type { margin-top: 0; }
+
+  .fala {
+    background: #0f0f1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: #ddd;
+    font-style: italic;
+  }
+
+  .fala strong { color: #fff; font-style: normal; }
+
+  .animacao {
+    background: #0f1a0f;
+    border: 1px solid #1a4a1a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: #86efac;
+    margin-bottom: 12px;
+  }
+
+  .animacao::before {
+    content: "✦ Animação: ";
+    font-weight: 700;
+    color: #4ade80;
+  }
+
+  .demo-steps {
+    list-style: none;
+    margin-top: 8px;
+  }
+
+  .demo-steps li {
+    padding: 10px 14px;
+    background: #0f0f1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .demo-steps li .num {
+    background: #ff4081;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.75rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .demo-steps li .dur {
+    margin-left: auto;
+    color: #888;
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .alert {
+    background: #1a1200;
+    border: 1px solid #854d0e;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: #fde68a;
+    margin-top: 12px;
+  }
+
+  .alert::before { content: "⚡ "; }
+
+  .steps-section {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+
+  .steps-section h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff4081;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    background: #ff4081;
+    color: #fff;
+    font-weight: 900;
+    font-size: 0.85rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .step-content p {
+    font-size: 0.85rem;
+    color: #aaa;
+    line-height: 1.6;
+  }
+
+  .step-content code {
+    background: #0f0f1a;
+    border: 1px solid #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #00e5ff;
+  }
+
+  .canva-tip {
+    background: #1a0f1a;
+    border: 1px solid #6d28d9;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    color: #c084fc;
+    margin-top: 10px;
+  }
+
+  .canva-tip strong { color: #e879f9; }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    color: #444;
+    font-size: 0.8rem;
+    border-top: 1px solid #2a2a4a;
+    padding-top: 20px;
+  }
+
+  @media print {
+    body { background: white; color: #111; padding: 20px 30px; }
+    .slide, .steps-section { background: #f8f8f8; border-color: #0891b2; }
+    .slide-number { background: #0891b2; color: white; }
+    .slide-time { background: #e11d48; }
+    .fala { background: #fff; border-color: #ddd; color: #333; }
+    .animacao { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+    .demo-steps li { background: #fff; border-color: #ddd; }
+    .demo-steps li .num { background: #e11d48; }
+    .step-num { background: #e11d48; }
+    .alert { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+    .canva-tip { background: #faf5ff; border-color: #d8b4fe; color: #6b21a8; }
+    h1 { color: #0891b2; }
+    .slide-title, .step-content h3 { color: #111; }
+    .section-label { color: #0891b2; }
+    .tag { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+    .timeline-item { background: #f1f5f9; color: #334155; }
+    .timeline-item .time { color: #e11d48; }
+    footer { color: #999; border-color: #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Roteiro Demo Day</h1>
+<p class="subtitle">Naiara Rodrigues · Kensei AI Foundations 2026 · Trilha A — 5 Apps com Streamlit</p>
+
+<div class="timeline">
+  <div class="timeline-item"><span class="time">0:00</span>Abertura</div>
+  <div class="timeline-item"><span class="time">0:30</span>O que construí</div>
+  <div class="timeline-item"><span class="time">0:50</span>Jornada</div>
+  <div class="timeline-item"><span class="time">1:20</span>Demo ao vivo</div>
+  <div class="timeline-item"><span class="time">3:20</span>O que aprendi</div>
+  <div class="timeline-item"><span class="time">4:20</span>Próximos passos</div>
+</div>
+
+
+<!-- SLIDE 1 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">1</div>
+    <div class="slide-title">Abertura — Quem sou eu</div>
+    <div class="slide-time">0:00 – 0:45</div>
+  </div>
+  <div class="tag">Slide no Canva</div>
+
+  <div class="animacao">Fundo escuro estilo cyberpunk com partículas ou grade neon. Nome aparece com efeito de digitação letra por letra. Subtítulo entra com fade suave logo abaixo.</div>
+
+  <div class="section-label">O que colocar no slide</div>
+  <div class="fala">
+    Nome: <strong>Naiara Rodrigues</strong><br>
+    Curso: <strong>Kensei AI Foundations 2026</strong><br>
+    Trilha escolhida: <strong>Trilha A — Apps Web com Streamlit + IA</strong><br>
+    Área: <strong>Cybersecurity · Transição de carreira: Vendas → TI</strong><br>
+    Período: <strong>2º período de TI</strong>
+  </div>
+
+  <div class="section-label">O que falar</div>
+  <div class="fala">
+    "Olá a todos! Meu nome é Naiara Rodrigues. Estou no segundo período do curso de Tecnologia da Informação
+    e vim de uma trajetória bem diferente — trabalhei por anos na área comercial e de vendas.
+    Sabe aquela sensação de olhar para uma área completamente nova e pensar: será que eu consigo?
+    Pois é, eu tive essa sensação muitas vezes ao longo dessas 8 semanas.
+    Mas hoje estou aqui para provar — para mim mesma e para vocês — que é possível sim.
+    O curso Kensei AI Foundations 2026 me mostrou que tecnologia não é um bicho de sete cabeças,
+    que Inteligência Artificial não é coisa só de quem já tem anos de experiência, e que com dedicação
+    e as ferramentas certas, qualquer pessoa consegue construir coisas incríveis.
+    Escolhi a Trilha A: construir aplicações web reais com Python, Streamlit e IA.
+    Cinco aplicações. Do zero. Em oito semanas. Vou mostrar para vocês."
+  </div>
+</div>
+
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">2</div>
+    <div class="slide-title">Os 5 apps que eu construí</div>
+    <div class="slide-time">0:45 – 1:15</div>
+  </div>
+  <div class="tag">Slide no Canva</div>
+
+  <div class="animacao">Cada item da lista entra um por vez com animação "Deslizar da esquerda". Coloque um ícone grande colorido ao lado de cada nome. Use cores diferentes para cada linha.</div>
+
+  <div class="section-label">O que colocar no slide</div>
+  <div class="fala">
+    🧮 <strong>App 1</strong> — Calculadora de IMC com faixas visuais<br>
+    🛡️ <strong>App 2</strong> — Painel de Ataques Cibernéticos Globais (2015–2024)<br>
+    🤖 <strong>App 3</strong> — Bate-papo com IA rodando localmente com Ollama<br>
+    📄 <strong>App 4</strong> — Analisador de PDF com IA: resumo, tópicos e perguntas<br>
+    🔍 <strong>App 5</strong> — Investigador SOC: analisa IPs e URLs suspeitos com IA
+  </div>
+
+  <div class="section-label">O que falar</div>
+  <div class="fala">
+    "Esses são os cinco apps que eu construí ao longo da Semana 7 do curso.
+    Cada um resolve um problema diferente, para públicos diferentes.
+    A Calculadora de IMC é simples e direta — mas tem interface visual com faixas coloridas,
+    é bonita, funcional e qualquer pessoa consegue usar.
+    O Painel de Ataques Cibernéticos analisa 3.000 incidentes reais de 2015 a 2024 —
+    esse foi especialmente especial pra mim porque conecta tecnologia com a área de segurança que quero seguir.
+    O Bate-papo com IA roda um modelo de linguagem 100% local no computador — sem internet, sem custo,
+    sem enviar seus dados para lugar nenhum. Isso é muito importante para ambientes corporativos e de segurança.
+    O Analisador de PDF lê qualquer documento e gera um resumo inteligente com os principais pontos —
+    imagina usar isso em auditorias, contratos ou relatórios de segurança.
+    E o Investigador SOC analisa endereços IP e URLs suspeitos, como faz um analista de segurança no dia a dia.
+    Todos rodam no navegador, com visual profissional, e foram feitos com Python puro.
+    Daqui a pouco vou mostrar três deles funcionando ao vivo."
+  </div>
+</div>
+
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">3</div>
+    <div class="slide-title">Minha jornada em 8 semanas</div>
+    <div class="slide-time">1:15 – 2:00</div>
+  </div>
+  <div class="tag">Slide no Canva</div>
+
+  <div class="animacao">Linha do tempo horizontal com 8 pontos. Cada ponto acende com um clique — use animação "Aparecer" em sequência. Coloque uma mini-imagem ou ícone em cada semana.</div>
+
+  <div class="section-label">O que colocar no slide</div>
+  <div class="fala">
+    📁 <strong>S1</strong> → Primeiro repositório no GitHub — nunca tinha programado<br>
+    🐍 <strong>S2</strong> → Python do zero com IA como copiloto<br>
+    🌌 <strong>S3</strong> → Dashboard interativo com dados reais da NASA<br>
+    🔑 <strong>S4</strong> → APIs de IA: conectei Python ao Google Gemini<br>
+    🏠 <strong>S5</strong> → Plataforma de inteligência de mercado — Airbnb Paris<br>
+    🤖 <strong>S6</strong> → Agentes de IA com n8n + Claude (Anthropic)<br>
+    🚀 <strong>S7</strong> → 5 apps web completos com Streamlit + IA<br>
+    🏆 <strong>S8</strong> → Relatório completo + Demo Day — chegamos!
+  </div>
+
+  <div class="section-label">O que falar</div>
+  <div class="fala">
+    "Deixa eu te contar por onde passei nessas 8 semanas — porque o caminho importa tanto quanto o destino.
+    Na Semana 1, criei meu primeiro repositório no GitHub. Parece simples, mas para mim foi enorme —
+    eu nunca tinha escrito uma linha de código na vida. Aprender o que é Prompt Engineering e entender
+    que dá para programar com IA como copiloto mudou tudo.
+    Na Semana 2, escrevi meus primeiros scripts em Python. Variáveis, listas, loops.
+    Teve um momento em que eu não estava entendendo o código, pedi para a IA explicar o que estava fazendo —
+    e foi aí que tudo começou a se encaixar na minha cabeça.
+    Na Semana 3, trabalhei com dados reais da NASA usando Pandas e publiquei um dashboard online
+    sobre asteroides próximos da Terra. Quando vi o site funcionando pela primeira vez, meu cérebro explodiu.
+    Não acreditei que tinha conseguido fazer aquilo.
+    Na Semana 4, conectei Python com a API do Google Gemini e aprendi a proteger credenciais com variáveis
+    de ambiente. Isso fez muito sentido para mim porque estou na área de cybersecurity — proteger informações
+    é fundamental.
+    Na Semana 5, construí uma plataforma completa de inteligência de mercado com dados reais do Airbnb de Paris.
+    Foi a semana que mais pareceu um projeto profissional de verdade.
+    Na Semana 6, criei 4 agentes de IA com n8n e Claude — programas que tomam decisões e usam ferramentas
+    sozinhos, sem precisar de intervenção humana.
+    E na Semana 7, transformei tudo que aprendi em 5 aplicações web completas.
+    Oito semanas. Do zero completo. Para isso que vocês vão ver agora."
+  </div>
+</div>
+
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">4</div>
+    <div class="slide-title">Demo ao vivo — compartilhe a tela</div>
+    <div class="slide-time">2:00 – 3:50</div>
+  </div>
+  <div class="tag">Gravação de tela — minimize os slides aqui e abra o navegador</div>
+
+  <div class="alert">Prepare antes de gravar: abra os 3 apps em abas separadas do navegador e deixe os dados já digitados. Assim a demo fica fluida, sem travamentos.</div>
+
+  <div class="section-label">Ordem da demo</div>
+  <ul class="demo-steps">
+    <li>
+      <div class="num">1</div>
+      <div>
+        <strong>Calculadora de IMC</strong> — Digite peso 70kg e altura 1,65m. Clique em calcular.
+        Mostre o resultado 25,7 e aponte para a faixa colorida que indica a categoria.
+        Fale: <em>"Qualquer pessoa consegue usar — é simples, visual e funciona no navegador."</em>
+      </div>
+      <div class="dur">~35 seg</div>
+    </li>
+    <li>
+      <div class="num">2</div>
+      <div>
+        <strong>Bate-papo com IA</strong> — Digite a pergunta: <em>"Quais foram os maiores ataques de ransomware da história?"</em>
+        Mostre a resposta chegando em tempo real. Aponte que a IA roda 100% local com Ollama —
+        sem internet, sem custo, sem enviar dados para nuvem.
+      </div>
+      <div class="dur">~40 seg</div>
+    </li>
+    <li>
+      <div class="num">3</div>
+      <div>
+        <strong>Analisador de PDF com IA</strong> — Suba qualquer PDF (pode ser o seu relatório do curso).
+        Mostre a análise sendo gerada: tipo do documento, resumo em tópicos e informações extraídas.
+        Fale: <em>"Imagina usar isso para analisar contratos, laudos, relatórios de segurança..."</em>
+      </div>
+      <div class="dur">~40 seg</div>
+    </li>
+  </ul>
+
+  <div class="section-label">O que falar ao longo da demo</div>
+  <div class="fala">
+    <strong>Ao abrir a Calculadora:</strong><br>
+    "Esse foi o primeiro app que construí na Semana 7. A interface é limpa, com as faixas coloridas
+    mostrando visualmente onde a pessoa está — abaixo do peso, normal, sobrepeso.
+    Qualquer pessoa consegue usar sem precisar entender nada de programação.
+    Isso para mim é o ponto mais importante: tecnologia que serve para as pessoas."<br><br>
+    <strong>Ao abrir o Chatbot:</strong><br>
+    "Esse foi o app que eu menos acreditava que conseguiria construir.
+    Um chatbot com IA que conversa de verdade — rodando 100% aqui, no meu computador, com o Ollama.
+    Nenhuma informação vai para a nuvem, nenhum dado sai da máquina.
+    Para quem trabalha em ambientes corporativos ou com segurança, isso é fundamental.
+    Vou perguntar algo sobre cybersecurity — e olha a resposta chegando em tempo real."<br><br>
+    <strong>Ao abrir o Analisador de PDF:</strong><br>
+    "Esse é o meu favorito. Você sobe qualquer documento — um contrato, um laudo, um relatório de segurança —
+    e a IA lê, classifica e resume os pontos principais automaticamente.
+    Imagina isso em um escritório de advocacia, numa equipe de segurança, num hospital.
+    O tempo que economiza é enorme. E foi feito com Python, por mim, em uma semana."
+  </div>
+</div>
+
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">5</div>
+    <div class="slide-title">O que aprendi — 3 grandes lições</div>
+    <div class="slide-time">3:50 – 4:35</div>
+  </div>
+  <div class="tag">Slide no Canva</div>
+
+  <div class="animacao">3 cards grandes aparecendo um por um com animação "Crescer" (escala). Cada card tem um número enorme em destaque (01, 02, 03) com a lição embaixo em texto menor.</div>
+
+  <div class="section-label">O que colocar no slide</div>
+  <div class="fala">
+    <strong>01</strong><br>
+    IA não é só uma ferramenta de perguntas e respostas.<br>
+    Ela automatiza processos inteiros — do início ao fim.<br><br>
+    <strong>02</strong><br>
+    Criar um chatbot parecia impossível para mim no início.<br>
+    Aprendi que o impossível é só questão de tempo e prática.<br><br>
+    <strong>03</strong><br>
+    Programar com IA é uma habilidade nova.<br>
+    Saber o que pedir vale mais do que decorar sintaxe.
+  </div>
+
+  <div class="section-label">O que falar</div>
+  <div class="fala">
+    "Esse curso não mudou só o que eu sei fazer — mudou a forma como eu penso e como eu me vejo.
+    Deixa eu compartilhar três lições que ficaram gravadas pra mim para sempre.<br><br>
+    A primeira lição: antes de começar o curso, eu via a IA como uma ferramenta de respostas rápidas —
+    tipo um Google mais inteligente. Hoje eu entendo que a IA é muito mais do que isso.
+    Ela consegue automatizar processos inteiros, do começo ao fim. Ela conecta sistemas diferentes.
+    Ela toma decisões. E eu posso programar isso. Eu, que vim da área de vendas, posso construir
+    ferramentas com Inteligência Artificial. Isso mudou completamente o que eu enxergo como possível
+    para a minha carreira.<br><br>
+    A segunda lição veio de um momento bem específico: quando eu vi o projeto do chatbot pela primeira vez,
+    travei. Pensei — isso é muito avançado pra mim, no segundo período de TI, vindo de uma área diferente.
+    Mas fui tentando. Pedi ajuda à IA para entender o que cada parte do código fazia.
+    E o chatbot funcionou. Aquele momento me provou que a barreira não era técnica — era mental.
+    O impossível é só uma questão de tempo e de não desistir.<br><br>
+    A terceira lição é sobre uma habilidade que eu não esperava desenvolver aqui:
+    saber se comunicar com a IA. Programar com IA como copiloto é diferente de programar sozinha.
+    Você precisa saber o que pedir, ser específica, descrever bem o problema.
+    Isso é mais importante do que decorar sintaxe. E é uma habilidade que vai ser essencial
+    no mercado de trabalho nos próximos anos."
+  </div>
+</div>
+
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <div class="slide-header">
+    <div class="slide-number">6</div>
+    <div class="slide-title">Próximos passos + agradecimento</div>
+    <div class="slide-time">4:35 – 5:00</div>
+  </div>
+  <div class="tag">Slide no Canva</div>
+
+  <div class="animacao">Próximos passos aparecem com efeito de digitação, um mês por vez. Ao terminar, aparece uma mensagem de agradecimento com fade suave e o logo da Kensei no centro.</div>
+
+  <div class="section-label">O que colocar no slide</div>
+  <div class="fala">
+    🗓️ <strong>Mês 1</strong> → Aprofundar automação com n8n — fluxos que resolvem problemas reais<br>
+    🌐 <strong>Mês 2</strong> → Desenvolver apps e sites que facilitam a vida das pessoas<br>
+    📊 <strong>Mês 3</strong> → Integrar análise de dados com IA nos projetos de cybersecurity<br><br>
+    💙 Obrigada, Zé · Gilson · Kensei · e todos os colegas<br>
+    <em>"A jornada continua."</em>
+  </div>
+
+  <div class="section-label">O que falar</div>
+  <div class="fala">
+    "Minha jornada não termina aqui — na verdade, ela está só começando de verdade agora.
+    Nesses 3 meses que vêm pela frente, tenho um plano claro.<br><br>
+    No primeiro mês, quero me aprofundar em automação com n8n. Aprendi durante o curso que automação
+    visual é poderosa e que posso criar fluxos que resolvem problemas reais sem escrever uma linha de código.
+    Quero explorar isso com mais profundidade — conectar ferramentas, automatizar tarefas repetitivas,
+    criar pipelines inteligentes.<br><br>
+    No segundo mês, quero colocar em prática o que mais me apaixonou no curso: criar apps e sites
+    que facilitam a vida das pessoas. Não só para quem é da área de tecnologia — mas para qualquer pessoa.
+    Quero continuar desenvolvendo com Streamlit e Python, mas também explorar outras ferramentas web.<br><br>
+    No terceiro mês, quero unir tudo: análise de dados, IA e cybersecurity.
+    Dashboards de segurança, ferramentas de análise de ameaças, automações para equipes de SOC.
+    É onde quero construir minha carreira — na interseção entre dados, IA e segurança.<br><br>
+    Antes de fechar, preciso agradecer. Ao Zé e ao Gilson — muito obrigada pela paciência,
+    pela didática e por tornarem assuntos complexos algo acessível e empolgante.
+    À Kensei por criar um espaço onde pessoas como eu — em transição de carreira, cheias de dúvidas —
+    conseguem aprender, crescer e se sentir parte de algo maior.
+    Aos meus colegas, que compartilharam conhecimento, dúvidas e conquistas — aprendi tanto com vocês
+    quanto aprendi com os conteúdos.
+    Obrigada. A jornada continua."
+  </div>
+</div>
+
+
+<!-- PASSO A PASSO CANVA -->
+<div class="steps-section">
+  <h2>Como gravar o vídeo no Canva — passo a passo</h2>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h3>Abra o Canva e crie uma apresentação</h3>
+      <p>Acesse <code>canva.com</code> → clique em <strong>Criar design</strong> → escolha <strong>Apresentação</strong>. Busque por templates com palavras como <em>"dark tech"</em>, <em>"cyberpunk"</em> ou <em>"neon"</em> para combinar com o visual dos seus apps.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h3>Monte os 6 slides</h3>
+      <p>Use o conteúdo de cada slide deste roteiro. Para animações: clique em um elemento → <strong>Animar</strong> (no menu superior) → escolha o estilo. Recomendados: <em>Aparecer</em>, <em>Deslizar</em> e <em>Digitação</em>.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h3>Inicie a gravação</h3>
+      <p>No Canva: clique em <strong>Apresentar</strong> (canto superior direito) → <strong>Apresentar e gravar</strong>. Ele abre modo tela cheia com câmera + microfone + slides ao mesmo tempo.</p>
+      <div class="canva-tip">Dica: quando chegar no Slide 4 (Demo), minimize o Canva e abra os apps no navegador. Depois volte ao Canva para o Slide 5.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h3>Exporte o vídeo</h3>
+      <p>Após a gravação: clique em <strong>Compartilhar</strong> → <strong>Baixar</strong> → formato <strong>MP4</strong>. Pronto — seu vídeo está salvo.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-content">
+      <h3>Salve este roteiro em PDF</h3>
+      <p>Neste arquivo aberto no Chrome: pressione <code>Ctrl + P</code> → em <em>Destino</em> selecione <strong>Salvar como PDF</strong> → clique em <strong>Salvar</strong>.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Kensei CyberSec Lab · AI Foundations 2026 · Naiara Rodrigues · A jornada continua.
+</footer>
+
+</body>
+</html>
